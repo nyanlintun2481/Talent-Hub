@@ -1,5 +1,11 @@
-const API_URL = 'http://localhost:5000/api/perfiles';
-const AUTH_URL = 'http://localhost:5000/api/auth';
+
+const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5000/api'
+    : 'https://talent-hub-7cgj.onrender.com/api';
+
+// Ahora tus constantes quedan cortas y limpias:
+const API_URL = `${BASE_URL}/perfiles`;
+const AUTH_URL = `${BASE_URL}/auth`;
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
