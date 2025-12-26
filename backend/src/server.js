@@ -17,11 +17,13 @@ const app = express();
 // MIDDLEWARES
 // =====================
 // Para desarrollo: permitir cualquier origen
-app.use(cors());
+/* app.use(cors()); */
 
 // Para producción: limitar a tu frontend
-// const allowedOrigins = ['https://tu-frontend-render.onrender.com'];
-// app.use(cors({ origin: allowedOrigins }));
+app.use(cors({
+  origin: 'https://talent-hub-zxqo.onrender.com',
+  credentials: true
+}));
 
 app.use(express.json());
 
