@@ -1,5 +1,5 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import User from '../models/user.js';  // <-- esto faltaba
 import { login } from '../controllers/auth.controller.js';
 
