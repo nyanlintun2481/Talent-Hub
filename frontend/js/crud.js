@@ -57,7 +57,7 @@ export function cerrarModal() {
 // LÓGICA CRUD
 // ==========================================
 async function guardarPerfil() {
-  if (!nameInput || !titleInput) return;
+  if (!nameInput || !titleInput || !categoryInput || !seniorityInput) return;
 
   const perfil = {
     name: nameInput.value.trim(),
@@ -85,6 +85,7 @@ async function guardarPerfil() {
     cerrarModal();
     if (onSuccessCallback) onSuccessCallback();
   } catch (error) {
+    console.error("Error CRUD:", error);
     alert("Error al guardar perfil: " + (error.message || error));
   } finally {
     ocultarLoader();
@@ -98,6 +99,7 @@ export async function borrarPerfil(id, onSuccess) {
     await eliminarPerfil(id);
     if (onSuccess) onSuccess();
   } catch (error) {
+    console.error("Error al eliminar:", error);
     alert("Error al eliminar perfil: " + (error.message || error));
   } finally {
     ocultarLoader();
