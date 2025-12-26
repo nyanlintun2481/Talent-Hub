@@ -1,4 +1,5 @@
-const BASE_URL = 'https://talent-hub-zxqo.onrender.com/api';
+const BASE_URL = 'https://talent-hub-0n2p.onrender.com/api';
+
 
 export async function obtenerPerfiles() {
   const res = await fetch(`${BASE_URL}/perfiles`);
