@@ -1,4 +1,6 @@
-const Perfil = require('../models/Perfil');
+import Perfil from '../models/perfil.js';
+
+
 
 exports.obtenerPerfiles = async (req, res) => {
   try {
