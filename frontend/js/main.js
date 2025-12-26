@@ -7,26 +7,20 @@ import { abrirModalNuevo, abrirModalEditar, borrarPerfil } from './crud.js';
 const getEl = (id) => document.getElementById(id);
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // =====================
-    // ELEMENTOS DEL DOM
-    // =====================
     const addProfileBtn = getEl('addProfileBtn');
     const clearFiltersBtn = getEl('clearFilters');
     const openLoginBtn = getEl('openLoginBtn');
     const logoutBtn = getEl('logoutBtn');
     const loginModal = getEl('loginModal');
     const doLoginBtn = getEl('doLogin');
-    const themeToggle = getEl('themeToggle');
-    const themeIcon = getEl('themeIcon');
 
     let perfiles = [];
+    let usuarioRol = null; // guardamos el rol del usuario logueado
 
-    // =====================
-    // FUNCIONES AUX
-    // =====================
     function verificarAutenticacion() {
         const token = localStorage.getItem('token');
-        addProfileBtn?.classList.toggle('hidden', !token);
+        usuarioRol = token ? JSON.parse(atob(token.split('.')[1])).role : null;
+        addProfileBtn?.classList.toggle('hidden', usuarioRol !== 'admin');
         logoutBtn?.classList.toggle('hidden', !token);
         openLoginBtn?.classList.toggle('hidden', !!token);
     }
@@ -47,31 +41,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         const perfilesFiltrados = aplicarFiltros(perfiles);
         renderizarPerfiles(
             perfilesFiltrados,
-            perfil => abrirModalEditar(perfil, cargarPerfiles),
-            id => borrarPerfil(id, cargarPerfiles)
+            usuarioRol === 'admin' ? perfil => abrirModalEditar(perfil, cargarPerfiles) : null,
+            usuarioRol === 'admin' ? id => borrarPerfil(id, cargarPerfiles) : null
         );
     }
 
-    // =====================
-    // EVENTOS LOGIN
-    // =====================
+    // LOGIN
     openLoginBtn?.addEventListener('click', () => {
-        if (loginModal) loginModal.classList.remove('hidden'), loginModal.classList.add('flex');
+        loginModal?.classList.remove('hidden');
+        loginModal?.classList.add('flex');
     });
 
     getEl('closeLogin')?.addEventListener('click', () => {
-        if (loginModal) loginModal.classList.add('hidden'), loginModal.classList.remove('flex');
+        loginModal?.classList.add('hidden');
+        loginModal?.classList.remove('flex');
     });
 
     doLoginBtn?.addEventListener('click', async () => {
-        const emailInput = getEl('loginEmail');
-        const passInput = getEl('loginPass');
-
-        if (!emailInput || !passInput) return alert('Formulario de login no encontrado');
-
-        const email = emailInput.value;
-        const pass = passInput.value;
-
+        const email = getEl('loginEmail')?.value;
+        const pass = getEl('loginPass')?.value;
         try {
             const data = await login(email, pass);
             if (data.token) {
@@ -89,39 +77,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     logoutBtn?.addEventListener('click', () => {
         localStorage.removeItem('token');
+        usuarioRol = null;
         location.reload();
     });
 
-    // =====================
-    // EVENTOS PERFILES Y FILTROS
-    // =====================
+    // BOTON NUEVO PERFIL Y FILTROS
     addProfileBtn?.addEventListener('click', () => abrirModalNuevo(cargarPerfiles));
-
     clearFiltersBtn?.addEventListener('click', () => {
         limpiarFiltros();
         actualizarVista();
     });
-
     registrarEventosFiltros(actualizarVista);
 
-    // =====================
-    // TOGGLE TEMA CLARO/OSCURO
-    // =====================
-    if (themeToggle && themeIcon) {
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('bg-gray-900');
-            document.body.classList.toggle('bg-gray-100');
-            document.body.classList.toggle('text-gray-100');
-            document.body.classList.toggle('text-gray-900');
-
-            const isDark = document.body.classList.contains('bg-gray-900');
-            themeIcon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
-        });
-    }
-
-    // =====================
     // INICIO
-    // =====================
     setupTheme();
     verificarAutenticacion();
     await cargarPerfiles();
