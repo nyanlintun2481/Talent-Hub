@@ -1,4 +1,4 @@
-// main.js - Versión Final Corregida
+// main.js
 import { obtenerPerfiles, login } from './api.js';
 import { renderizarPerfiles, mostrarLoader, ocultarLoader, setupTheme } from './ui.js';
 import { aplicarFiltros, limpiarFiltros, registrarEventosFiltros } from './filtros.js';
@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function actualizarVista() {
-        // Envolvemos en try/catch para que si el buscador falla, los perfiles carguen igual
         try {
             const perfilesFiltrados = aplicarFiltros(perfiles);
             renderizarPerfiles(
@@ -37,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             );
         } catch (e) {
             console.warn("Filtros fallidos, renderizando base:", e);
-            renderizarPerfiles(perfiles, /* ... */);
+            renderizarPerfiles(perfiles);
         }
     }
 
@@ -49,17 +48,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('openLoginBtn')?.classList.toggle('hidden', isLogged);
     }
 
-    // --- 3. EVENTOS DE LOGIN (CORREGIDO) ---
-    // Botón para abrir el modal
+    // --- 3. EVENTOS LOGIN ---
     document.getElementById('openLoginBtn')?.addEventListener('click', () => {
         const modal = document.getElementById('loginModal');
         if (modal) {
             modal.classList.remove('hidden');
-            modal.classList.add('flex'); // Asegúrate de usar flex si es centrado
+            modal.classList.add('flex');
         }
     });
 
-    // Botón dentro del modal para ejecutar el login
     document.getElementById('doLogin')?.addEventListener('click', async () => {
         const email = document.getElementById('loginEmail')?.value;
         const pass = document.getElementById('loginPass')?.value;
@@ -70,10 +67,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await login(email, pass);
             if (data.token) {
                 localStorage.setItem('token', data.token);
-                // En lugar de recargar todo, actualizamos el estado y la interfaz
                 verificarAutenticacion();
                 document.getElementById('loginModal')?.classList.add('hidden');
-                await cargarPerfilesInicial(); 
+                await cargarPerfilesInicial();
             } else {
                 alert(data.msg || "Credenciales incorrectas");
             }
@@ -82,12 +78,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // --- 4. INICIALIZACIÓN ---
+    // --- 4. BOTÓN SALIR ---
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        isLogged = false;
+        verificarAutenticacion();
+        actualizarVista();
+    });
+
+    // --- 5. BOTÓN NUEVO PERFIL ---
+    document.getElementById('addProfileBtn')?.addEventListener('click', () => {
+        abrirModalNuevo(cargarPerfilesInicial);
+    });
+
+    // --- 6. BOTÓN LIMPIAR FILTROS ---
+    document.getElementById('clearFilters')?.addEventListener('click', () => {
+        limpiarFiltros();
+        actualizarVista();
+    });
+
+    // --- 7. INICIALIZACIÓN ---
     verificarAutenticacion();
-    
-    // Registrar eventos de filtros pasando la función de callback
     registrarEventosFiltros(actualizarVista);
-    
-    // Ejecutar carga inicial
     await cargarPerfilesInicial();
+    setupTheme();
 });
