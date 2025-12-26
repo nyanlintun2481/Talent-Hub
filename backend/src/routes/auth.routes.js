@@ -1,6 +1,6 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import User from '../models/User.js';  // <-- esto faltaba
+import User from '../models/user.js';  // <-- esto faltaba
 import { login } from '../controllers/auth.controller.js';
 
 const router = express.Router();

@@ -1,6 +1,6 @@
 // src/middleware/auth.middleware.js
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import User from '../models/user.js';
 
 /**
  * Middleware para proteger rutas mediante JWT
