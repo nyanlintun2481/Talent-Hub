@@ -15,84 +15,90 @@ const avatarInput = document.getElementById('avatarInput');
 
 let onSuccessCallback = null;
 
+// Abrir modal nuevo
 export function abrirModalNuevo(onSuccess) {
-  onSuccessCallback = onSuccess;
-  if (modalTitle) modalTitle.textContent = 'Nuevo Perfil';
+    onSuccessCallback = onSuccess;
+    if (modalTitle) modalTitle.textContent = 'Nuevo Perfil';
 
-  [profileIdInput, nameInput, titleInput, categoryInput, seniorityInput, avatarInput].forEach(input => {
-    if (input) input.value = '';
-  });
+    [profileIdInput, nameInput, titleInput, categoryInput, seniorityInput, avatarInput].forEach(input => {
+        if (input) input.value = '';
+    });
 
-  modal?.classList.remove('hidden');
-  modal?.classList.add('flex');
+    modal?.classList.remove('hidden');
+    modal?.classList.add('flex');
 }
 
+// Abrir modal editar
 export function abrirModalEditar(perfil, onSuccess) {
-  onSuccessCallback = onSuccess;
-  if (modalTitle) modalTitle.textContent = 'Editar Perfil';
+    onSuccessCallback = onSuccess;
+    if (modalTitle) modalTitle.textContent = 'Editar Perfil';
 
-  if (profileIdInput) profileIdInput.value = perfil._id || perfil.id;
-  if (nameInput) nameInput.value = perfil.name || '';
-  if (titleInput) titleInput.value = perfil.title || '';
-  if (categoryInput) categoryInput.value = perfil.category?._id || perfil.category || '';
-  if (seniorityInput) seniorityInput.value = perfil.level?._id || perfil.level || '';
-  if (avatarInput) avatarInput.value = perfil.avatar || '';
+    if (profileIdInput) profileIdInput.value = perfil._id || perfil.id;
+    if (nameInput) nameInput.value = perfil.name || '';
+    if (titleInput) titleInput.value = perfil.title || '';
+    if (categoryInput) categoryInput.value = perfil.category?._id || perfil.category || '';
+    if (seniorityInput) seniorityInput.value = perfil.level?._id || perfil.level || '';
+    if (avatarInput) avatarInput.value = perfil.avatar || '';
 
-  modal?.classList.remove('hidden');
-  modal?.classList.add('flex');
+    modal?.classList.remove('hidden');
+    modal?.classList.add('flex');
 }
 
+// Cerrar modal
 export function cerrarModal() {
-  modal?.classList.add('hidden');
-  modal?.classList.remove('flex');
+    modal?.classList.add('hidden');
+    modal?.classList.remove('flex');
 }
 
+// Guardar perfil
 async function guardarPerfil() {
-  if (!nameInput || !titleInput || !categoryInput || !seniorityInput) return;
+    if (!nameInput || !titleInput || !categoryInput || !seniorityInput) return;
 
-  const perfil = {
-    name: nameInput.value.trim(),
-    title: titleInput.value.trim(),
-    category: categoryInput.value.trim(),
-    level: seniorityInput.value.trim(),
-    avatar: avatarInput.value.trim() || 'https://i.pravatar.cc/150'
-  };
+    const perfil = {
+        name: nameInput.value.trim(),
+        title: titleInput.value.trim(),
+        category: categoryInput.value.trim(),
+        level: seniorityInput.value.trim(),
+        avatar: avatarInput.value.trim() || 'https://i.pravatar.cc/150'
+    };
 
-  if (!perfil.name || !perfil.title || !perfil.category || !perfil.level) {
-    alert("Por favor, completa todos los campos obligatorios.");
-    return;
-  }
+    if (!perfil.name || !perfil.title || !perfil.category || !perfil.level) {
+        alert("Por favor, completa todos los campos obligatorios.");
+        return;
+    }
 
-  try {
-    mostrarLoader();
-    const id = profileIdInput.value;
+    try {
+        mostrarLoader();
+        const id = profileIdInput.value;
 
-    if (id) await actualizarPerfil(id, perfil);
-    else await crearPerfil(perfil);
+        if (id) await actualizarPerfil(id, perfil);
+        else await crearPerfil(perfil);
 
-    cerrarModal();
-    if (onSuccessCallback) onSuccessCallback();
-  } catch (error) {
-    console.error("Error CRUD:", error);
-    alert("Error al guardar perfil: " + (error.message || error));
-  } finally {
-    ocultarLoader();
-  }
+        cerrarModal();
+        if (onSuccessCallback) onSuccessCallback();
+    } catch (error) {
+        console.error("Error CRUD:", error);
+        alert("Error al guardar perfil: " + (error.message || error));
+    } finally {
+        ocultarLoader();
+    }
 }
 
+// Borrar perfil
 export async function borrarPerfil(id, onSuccess) {
-  if (!confirm('¿Estás seguro de que deseas eliminar este perfil?')) return;
-  try {
-    mostrarLoader();
-    await eliminarPerfil(id);
-    if (onSuccess) onSuccess();
-  } catch (error) {
-    console.error("Error al eliminar:", error);
-    alert("Error al eliminar perfil: " + (error.message || error));
-  } finally {
-    ocultarLoader();
-  }
+    if (!confirm('¿Estás seguro de que deseas eliminar este perfil?')) return;
+    try {
+        mostrarLoader();
+        await eliminarPerfil(id);
+        if (onSuccess) onSuccess();
+    } catch (error) {
+        console.error("Error al eliminar:", error);
+        alert("Error al eliminar perfil: " + (error.message || error));
+    } finally {
+        ocultarLoader();
+    }
 }
 
+// Eventos
 saveBtn?.addEventListener('click', guardarPerfil);
 modal?.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', cerrarModal));
