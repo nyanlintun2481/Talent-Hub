@@ -57,10 +57,12 @@ export async function eliminarPerfil(id) {
 
 // CATEGORÍAS
 export async function obtenerCategorias() {
-  return fetchJson(`${BASE_URL}/categories`);
+  const data = await fetchJson(`${BASE_URL}/categories`); // <-- ruta correcta
+  return data.categories || [];
 }
 
 // NIVELES
 export async function obtenerLevels() {
-  return fetchJson(`${BASE_URL}/levels`);
+  const data = await fetchJson(`${BASE_URL}/levels`);
+  return data.levels || [];
 }

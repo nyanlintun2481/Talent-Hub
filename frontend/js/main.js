@@ -6,11 +6,9 @@ import { abrirModalNuevo, abrirModalEditar, borrarPerfil } from './crud.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     let perfiles = [];
-    let isLogged = !!localStorage.getItem('token');
-    let categorias = [];
-    let niveles = [];
+    let role = localStorage.getItem('role') || 'user';
 
-    // --- 1. CONFIGURACIÓN DE TEMA ---
+    // --- 1. CONFIGURACIÓN DE TEMA (Dark Mode por defecto) ---
     const temaGuardado = localStorage.getItem('theme') || 'dark';
     document.body.classList.toggle('bg-gray-900', temaGuardado === 'dark');
     document.body.classList.toggle('text-gray-100', temaGuardado === 'dark');
@@ -33,8 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const perfilesFiltrados = aplicarFiltros(perfiles);
             renderizarPerfiles(
                 perfilesFiltrados,
-                perfil => isLogged && abrirModalEditar(perfil, cargarPerfilesInicial),
-                id => isLogged && borrarPerfil(id, cargarPerfilesInicial)
+                perfil => role === 'admin' && abrirModalEditar(perfil, cargarPerfilesInicial),
+                id => role === 'admin' && borrarPerfil(id, cargarPerfilesInicial)
             );
         } catch (e) {
             console.warn("Filtros fallidos, renderizando base:", e);
@@ -44,19 +42,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function verificarAutenticacion() {
         const token = localStorage.getItem('token');
-        isLogged = !!token;
-        document.getElementById('addProfileBtn')?.classList.toggle('hidden', !isLogged);
-        document.getElementById('logoutBtn')?.classList.toggle('hidden', !isLogged);
-        document.getElementById('openLoginBtn')?.classList.toggle('hidden', isLogged);
+        role = localStorage.getItem('role') || 'user';
+
+        document.getElementById('addProfileBtn')?.classList.toggle('hidden', role !== 'admin');
+        document.getElementById('logoutBtn')?.classList.toggle('hidden', !token);
+        document.getElementById('openLoginBtn')?.classList.toggle('hidden', !!token);
     }
 
     // --- 3. CARGAR CATEGORÍAS Y NIVELES ---
     async function cargarOpciones() {
         try {
-            categorias = await obtenerCategorias();
-            niveles = await obtenerLevels();
+            const categorias = await obtenerCategorias();
+            const niveles = await obtenerLevels();
 
-            // Modal selects
             const categorySelect = document.getElementById('categoryInput');
             const senioritySelect = document.getElementById('seniorityInput');
 
@@ -69,21 +67,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 senioritySelect.innerHTML = '<option value="">Seleccione...</option>' +
                     niveles.map(niv => `<option value="${niv._id}">${niv.name}</option>`).join('');
             }
-
-            // Filter selects
-            const categoryFilter = document.getElementById('categoryFilter');
-            const levelFilter = document.getElementById('seniorityFilter');
-
-            if (categoryFilter) {
-                categoryFilter.innerHTML = '<option value="">Todas...</option>' +
-                    categorias.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
-            }
-
-            if (levelFilter) {
-                levelFilter.innerHTML = '<option value="">Todos...</option>' +
-                    niveles.map(niv => `<option value="${niv.name}">${niv.name}</option>`).join('');
-            }
-
         } catch (err) {
             console.error("Error al cargar categorías o niveles:", err);
             alert("No se pudieron cargar categorías o niveles. Verifica tu backend.");
@@ -109,6 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await login(email, pass);
             if (data.token) {
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('role', data.user.role || 'user');
                 verificarAutenticacion();
                 document.getElementById('loginModal')?.classList.add('hidden');
                 await cargarPerfilesInicial();
@@ -124,7 +108,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- 5. BOTÓN SALIR ---
     document.getElementById('logoutBtn')?.addEventListener('click', () => {
         localStorage.removeItem('token');
-        isLogged = false;
+        localStorage.removeItem('role');
+        role = 'user';
         verificarAutenticacion();
         actualizarVista();
     });
