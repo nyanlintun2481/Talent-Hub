@@ -8,12 +8,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     let perfiles = [];
     let role = localStorage.getItem('role') || 'user';
 
-    // --- 1. CONFIGURACIÓN DE TEMA (Dark Mode por defecto) ---
     const temaGuardado = localStorage.getItem('theme') || 'dark';
     document.body.classList.toggle('bg-gray-900', temaGuardado === 'dark');
     document.body.classList.toggle('text-gray-100', temaGuardado === 'dark');
 
-    // --- 2. FUNCIONES DE CARGA Y VISTA ---
     async function cargarPerfilesInicial() {
         try {
             mostrarLoader();
@@ -49,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('openLoginBtn')?.classList.toggle('hidden', !!token);
     }
 
-    // --- 3. CARGAR CATEGORÍAS Y NIVELES ---
     async function cargarOpciones() {
         try {
             const categorias = await obtenerCategorias();
@@ -73,13 +70,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- 4. EVENTOS LOGIN ---
     document.getElementById('openLoginBtn')?.addEventListener('click', () => {
         const modal = document.getElementById('loginModal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
+        modal?.classList.remove('hidden');
+        modal?.classList.add('flex');
     });
 
     document.getElementById('doLogin')?.addEventListener('click', async () => {
@@ -105,7 +99,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // --- 5. BOTÓN SALIR ---
     document.getElementById('logoutBtn')?.addEventListener('click', () => {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
@@ -114,18 +107,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         actualizarVista();
     });
 
-    // --- 6. BOTÓN NUEVO PERFIL ---
     document.getElementById('addProfileBtn')?.addEventListener('click', () => {
         abrirModalNuevo(cargarPerfilesInicial);
     });
 
-    // --- 7. BOTÓN LIMPIAR FILTROS ---
     document.getElementById('clearFilters')?.addEventListener('click', () => {
         limpiarFiltros();
         actualizarVista();
     });
 
-    // --- 8. INICIALIZACIÓN ---
     verificarAutenticacion();
     registrarEventosFiltros(actualizarVista);
     await cargarOpciones();

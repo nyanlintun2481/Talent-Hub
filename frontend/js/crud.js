@@ -2,9 +2,6 @@
 import { crearPerfil, actualizarPerfil, eliminarPerfil } from './api.js';
 import { mostrarLoader, ocultarLoader } from './ui.js';
 
-// ==========================================
-// ELEMENTOS DEL DOM
-// ==========================================
 const modal = document.getElementById('profileModal');
 const modalTitle = document.getElementById('modalTitle');
 const saveBtn = document.getElementById('saveProfile');
@@ -18,9 +15,6 @@ const avatarInput = document.getElementById('avatarInput');
 
 let onSuccessCallback = null;
 
-// ==========================================
-// FUNCIONES DEL MODAL
-// ==========================================
 export function abrirModalNuevo(onSuccess) {
   onSuccessCallback = onSuccess;
   if (modalTitle) modalTitle.textContent = 'Nuevo Perfil';
@@ -53,9 +47,6 @@ export function cerrarModal() {
   modal?.classList.remove('flex');
 }
 
-// ==========================================
-// LÓGICA CRUD
-// ==========================================
 async function guardarPerfil() {
   if (!nameInput || !titleInput || !categoryInput || !seniorityInput) return;
 
@@ -76,11 +67,8 @@ async function guardarPerfil() {
     mostrarLoader();
     const id = profileIdInput.value;
 
-    if (id) {
-      await actualizarPerfil(id, perfil);
-    } else {
-      await crearPerfil(perfil);
-    }
+    if (id) await actualizarPerfil(id, perfil);
+    else await crearPerfil(perfil);
 
     cerrarModal();
     if (onSuccessCallback) onSuccessCallback();
@@ -106,10 +94,5 @@ export async function borrarPerfil(id, onSuccess) {
   }
 }
 
-// ==========================================
-// EVENTOS
-// ==========================================
 saveBtn?.addEventListener('click', guardarPerfil);
-
-const closeButtons = modal?.querySelectorAll('.close-modal');
-closeButtons?.forEach(btn => btn.addEventListener('click', cerrarModal));
+modal?.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', cerrarModal));

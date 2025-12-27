@@ -1,4 +1,4 @@
-// --- Funciones de estado ---
+// ui.js
 export function mostrarLoader() {
     const loader = document.getElementById('loader');
     loader?.classList.remove('hidden');
@@ -19,7 +19,6 @@ export function limpiarPerfiles() {
     if (container) container.innerHTML = '';
 }
 
-// --- Render de perfiles ---
 export function renderizarPerfiles(perfiles, onEditar, onEliminar) {
     limpiarPerfiles();
     const container = document.getElementById('profilesContainer');
@@ -31,7 +30,8 @@ export function renderizarPerfiles(perfiles, onEditar, onEliminar) {
     }
 
     mostrarMensajeVacio(false);
-    const esAdmin = !!localStorage.getItem('token');
+    const role = localStorage.getItem('role') || 'user';
+    const esAdmin = role === 'admin';
 
     perfiles.forEach(perfil => {
         const card = document.createElement('div');
@@ -61,7 +61,8 @@ export function renderizarPerfiles(perfiles, onEditar, onEliminar) {
             </footer>
         `;
 
-        if (esAdmin) {
+        if (!esAdmin) card.querySelector('footer')?.remove();
+        else {
             card.querySelector('[data-editar]').onclick = () => onEditar(perfil);
             card.querySelector('[data-eliminar]').onclick = () => onEliminar(perfil._id || perfil.id);
         }
@@ -70,7 +71,6 @@ export function renderizarPerfiles(perfiles, onEditar, onEliminar) {
     });
 }
 
-// --- Lógica de temas ---
 export function setupTheme() {
     const themeBtn = document.getElementById('themeToggle');
     if (!themeBtn) return;

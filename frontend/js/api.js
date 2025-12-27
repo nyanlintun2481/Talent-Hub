@@ -57,7 +57,7 @@ export async function eliminarPerfil(id) {
 
 // CATEGORÍAS
 export async function obtenerCategorias() {
-  const data = await fetchJson(`${BASE_URL}/categories`); // <-- ruta correcta
+  const data = await fetchJson(`${BASE_URL}/categories`); // ruta correcta
   return data.categories || [];
 }
 
