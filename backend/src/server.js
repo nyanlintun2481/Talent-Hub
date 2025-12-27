@@ -30,6 +30,13 @@ app.use(cors({
 
 app.use(express.json());
 
+
+// Middleware temporal de debug (opcional)
+app.use('/api', (req, res, next) => {
+  console.log('Request API:', req.method, req.originalUrl);
+  next();
+});
+
 // =====================
 // RUTAS API
 // =====================
