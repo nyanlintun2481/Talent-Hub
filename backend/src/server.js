@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 // Rutas
 import perfilRoutes from './routes/profiles.routes.js';
 import authRoutes from './routes/auth.routes.js';
-import categoryRoutes from './routes/category.routes.js';
+import categoryRoutes from './routes/categoy.routes.js';
 import levelRoutes from './routes/level.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
