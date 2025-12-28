@@ -67,6 +67,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 senioritySelect.innerHTML = '<option value="">Seleccione...</option>' +
                     niveles.map(niv => `<option value="${niv._id}">${niv.name}</option>`).join('');
             }
+            console.log('Categorias:', categorias);
+            console.log('Levels:', niveles);
+
         } catch (err) {
             console.error("Error al cargar categorías o niveles:", err);
             alert("No se pudieron cargar categorías o niveles. Verifica tu backend.");
