@@ -1,5 +1,5 @@
 // api.js
-const BASE_URL = 'https://talent-hub-m4t8.onrender.com';
+const BASE_URL = 'https://talent-hub-0n2p.onrender.com/api';
 
 async function fetchJson(url, options = {}) {
   const res = await fetch(url, options);
