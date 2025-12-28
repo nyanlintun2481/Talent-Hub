@@ -24,7 +24,7 @@ const app = express();
 // =====================
 // Permitir requests desde tu frontend (producción)
 app.use(cors({
-  origin: 'https://talent-hub-m4t8.onrender.com', // reemplaza con tu frontend si cambia
+  origin: 'https://talent-hub-m4t8.onrender.com/', // reemplaza con tu frontend si cambia
   credentials: true
 }));
 
